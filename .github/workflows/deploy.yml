@@ -9,23 +9,51 @@ permissions:
   contents: read
   id-token: write
 
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
+env:
+  TF_VAR_pvt_key: ${{ secrets.SSH_PRIV_KEY }}
 
 jobs:
-  deploy:
+  deploy-infrastructure:
     runs-on: ubuntu-latest
+    env:
+      TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Login to AWS
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: us-east-1
           role-to-assume: ${{ secrets.IAMROLE_GITHUB }}
-      - name: Test AWS credentials
-        run: |
-          aws sts get-caller-identity
-          aws ec2 run-instances --image-id ami-0a7a4e87939439934 --instance-type t4g.micro
 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate -no-color
+
+      - name: Terraform Plan
+        run: terraform plan -no-color
+
+      - name: Terraform Apply
+        run: terraform apply -no-color --auto-approve
+
+      - name: Terraform save output
+        run: terraform output -raw ec2_public_ip
+
+      # - run: echo ${{ steps.apply.outputs.stdout }}
+
+  deploy-website:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: site_files
+      - name: Deploy site files to Nginx
+        run: |
+          ls -larth

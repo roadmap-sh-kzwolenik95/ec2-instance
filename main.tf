@@ -142,7 +142,7 @@ resource "null_resource" "nginx-configurator" {
     type        = "ssh"
     host        = aws_instance.ubuntu_instance.public_ip
     user        = "ubuntu"
-    private_key = file("~/.ssh/id_rsa")
+    private_key = var.pvt_key
   }
 
   provisioner "file" {
