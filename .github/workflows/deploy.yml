@@ -7,7 +7,6 @@ on:
 
 permissions:
   contents: read
-  pages: write
   id-token: write
 
 concurrency:
@@ -24,6 +23,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: us-east-1
+          role-to-assume: ${{ secrets.IAMROLE_GITHUB }}
       - name: Test AWS credentials
         run: |
           aws sts get-caller-identity
