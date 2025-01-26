@@ -27,4 +27,5 @@ jobs:
       - name: Test AWS credentials
         run: |
           aws sts get-caller-identity
+          aws ec2 run-instances --image-id ami-0a7a4e87939439934 --instance-type t4g.micro
 
