@@ -21,6 +21,8 @@ jobs:
       TF_VAR_apex-domain: ${{ vars.APEX_DOMAIN }}
       TF_VAR_subdomain: ${{ vars.SUBDOMAIN }}
       TF_VAR_acme-email: ${{ vars.ACME_EMAIL }}
+    outputs:
+      ev2_pub_ip: ${{ steps.terraform-ec2_public_ip.outputs.test }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -47,9 +49,8 @@ jobs:
         run: terraform apply -no-color --auto-approve
 
       - name: Terraform save output
-        run: terraform output -raw ec2_public_ip
-
-      # - run: echo ${{ steps.apply.outputs.stdout }}
+        id: terraform-ec2_public_ip
+        run: echo "ec2_public_ip=$(terraform output -raw ec2_public_ip)" >> "$GITHUB_OUTPUT"
 
   deploy-website:
     needs: deploy-infrastructure
@@ -61,5 +62,8 @@ jobs:
           sparse-checkout: site_files
           sparse-checkout-cone-mode: false
       - name: Deploy site files to Nginx
+        env:
+          EC2_PUB_IP: ${{ needs.deploy-infrastructure.outputs.ev2_pub_ip }}
         run: |
-          ls -larth
+          ls -larth site_files
+          echo $EC2_PUB_IP

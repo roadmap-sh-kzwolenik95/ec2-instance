@@ -25,7 +25,7 @@ provider "acme" {
   server_url = "https://acme-v02.api.letsencrypt.org/directory"
 }
 
-variable "cloudflare_api_token" {}
+variable "cloudflare_api_token" { sensitive = true }
 
 provider "cloudflare" {
   api_token = var.cloudflare_api_token
