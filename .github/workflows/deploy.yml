@@ -24,7 +24,6 @@ jobs:
         with:
           aws-region: us-east-1
           role-to-assume: ${{ secrets.IAMROLE_GITHUB }}
-          managed-session-policies: arn:aws:iam::aws:policy/AdministratorAccess
       - name: Test AWS credentials
         run: |
           aws sts get-caller-identity
