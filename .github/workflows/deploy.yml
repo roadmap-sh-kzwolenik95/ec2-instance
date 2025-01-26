@@ -17,6 +17,10 @@ jobs:
     runs-on: ubuntu-latest
     env:
       TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      TF_VAR_my-machine-pub-key: ${{ PUB_KEY }}
+      TF_VAR_apex-domain: ${{ APEX_DOMAIN }}
+      TF_VAR_subdomain: ${{ SUBDOMAIN }}
+      TF_VAR_acme-email: ${{ ACME_EMAIL }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -48,12 +52,14 @@ jobs:
       # - run: echo ${{ steps.apply.outputs.stdout }}
 
   deploy-website:
+    needs: deploy-infrastructure
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           sparse-checkout: site_files
+          sparse-checkout-cone-mode: false
       - name: Deploy site files to Nginx
         run: |
           ls -larth
