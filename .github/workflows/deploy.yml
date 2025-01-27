@@ -22,7 +22,7 @@ jobs:
       TF_VAR_subdomain: ${{ vars.SUBDOMAIN }}
       TF_VAR_acme-email: ${{ vars.ACME_EMAIL }}
     outputs:
-      ev2_pub_ip: ${{ steps.terraform-ec2_public_ip.outputs.test }}
+      ec2_pub_ip: ${{ steps.terraform-ec2_public_ip.outputs.ec2_public_ip }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -63,7 +63,7 @@ jobs:
           sparse-checkout-cone-mode: false
       - name: Deploy site files to Nginx
         env:
-          EC2_PUB_IP: ${{ needs.deploy-infrastructure.outputs.ev2_pub_ip }}
+          EC2_PUB_IP: ${{ needs.deploy-infrastructure.outputs.ec2_pub_ip }}
         run: |
           ls -larth site_files
           echo $EC2_PUB_IP
