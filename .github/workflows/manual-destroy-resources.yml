@@ -1,4 +1,4 @@
-name: Manual destroy Ceph Terraform CI
+name: Manual destroy Terraform
 
 on:
   workflow_dispatch:

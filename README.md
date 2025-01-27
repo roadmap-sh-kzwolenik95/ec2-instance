@@ -118,4 +118,6 @@ This project fulfil requirements of the challenges and pushes for extra stretch 
 3. For the pipeline for the project I used GitHub Actions, it's already avaliable with GitHub repository and have readable pipeline syntax, it's easy to use with AWS and terraform
     > One job applies terraform and then uses rsync action to deploy the files
 
+    > There is another job "Manual destroy Terraform" that will run terraform destroy and cleanup after testing the demo project. No forgotten resources should be left and incur any innecessary charges
+
 Challenge link: https://roadmap.sh/projects/ec2-instance
