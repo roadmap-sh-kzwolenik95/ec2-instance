@@ -120,4 +120,18 @@ This project fulfil requirements of the challenges and pushes for extra stretch 
 
     > There is another job "Manual destroy Terraform" that will run terraform destroy and cleanup after testing the demo project. No forgotten resources should be left and incur any innecessary charges
 
+## Example access Nginx access logs:
+Log below demonstrates that requests that are coming from CloudFlare are done using https, all http request are redirects to the https (302 response code)
+```
+172.64.238.81 - - [27/Jan/2025:19:09:28 +0000] "GET / HTTP/1.1" 302 154 "-" "Mozilla/5.0 (X11; Linux x86_64; rv:134.0) Gecko/20100101 Firefox/134.0" "http"
+162.158.123.137 - - [27/Jan/2025:19:09:28 +0000] "GET / HTTP/2.0" 304 0 "-" "Mozilla/5.0 (X11; Linux x86_64; rv:134.0) Gecko/20100101 Firefox/134.0" "https"
+172.64.236.120 - - [27/Jan/2025:19:09:42 +0000] "GET / HTTP/2.0" 200 421 "-" "Mozilla/5.0 (X11; Linux x86_64; rv:134.0) Gecko/20100101 Firefox/134.0" "https"
+172.64.236.93 - - [27/Jan/2025:19:09:42 +0000] "GET /favicon.ico HTTP/2.0" 404 123 "https://awsnginx.kzwolenik.com/" "Mozilla/5.0 (X11; Linux x86_64; rv:134.0) Gecko/20100101 Firefox/134.0" "https"
+172.64.236.237 - - [27/Jan/2025:19:09:42 +0000] "GET /pexels-pixabay-45201.jpg HTTP/2.0" 200 412821 "https://awsnginx.kzwolenik.com/" "Mozilla/5.0 (X11; Linux x86_64; rv:134.0) Gecko/20100101 Firefox/134.0" "https"
+162.158.122.103 - - [27/Jan/2025:19:09:50 +0000] "GET / HTTP/1.1" 302 154 "-" "Mozilla/5.0 (X11; Linux x86_64; rv:134.0) Gecko/20100101 Firefox/134.0" "http"
+162.158.120.242 - - [27/Jan/2025:19:09:50 +0000] "GET / HTTP/2.0" 200 421 "-" "Mozilla/5.0 (X11; Linux x86_64; rv:134.0) Gecko/20100101 Firefox/134.0" "https"
+162.158.120.148 - - [27/Jan/2025:19:09:51 +0000] "GET /favicon.ico HTTP/2.0" 404 123 "https://awsnginx.kzwolenik.com/" "Mozilla/5.0 (X11; Linux x86_64; rv:134.0) Gecko/20100101 Firefox/134.0" "https"
+162.158.122.181 - - [27/Jan/2025:19:09:51 +0000] "GET /pexels-pixabay-45201.jpg HTTP/2.0" 200 412821 "https://awsnginx.kzwolenik.com/" "Mozilla/5.0 (X11; Linux x86_64; rv:134.0) Gecko/20100101 Firefox/134.0" "https"
+```
+
 Challenge link: https://roadmap.sh/projects/ec2-instance
