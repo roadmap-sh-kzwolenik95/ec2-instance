@@ -22,7 +22,8 @@ jobs:
       TF_VAR_subdomain: ${{ vars.SUBDOMAIN }}
       TF_VAR_acme-email: ${{ vars.ACME_EMAIL }}
     outputs:
-      ec2_pub_ip: ${{ steps.terraform-ec2_public_ip.outputs.ec2_public_ip }}
+      ec2_pub_ip: ${{ steps.terraform-outputs.outputs.ec2_public_ip }}
+      full_domain: ${{ steps.terraform-outputs.outputs.full_domain }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -48,9 +49,11 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -no-color --auto-approve
 
-      - name: Terraform save output
-        id: terraform-ec2_public_ip
-        run: echo "ec2_public_ip=$(terraform output -raw ec2_public_ip)" >> "$GITHUB_OUTPUT"
+      - name: Terraform save outputs
+        id: terraform-outputs
+        run: |
+          echo "ec2_public_ip=$(terraform output -raw ec2_public_ip)" >> "$GITHUB_OUTPUT"
+          echo "full_domain=$(terraform output -raw full_domain)" >> "$GITHUB_OUTPUT"
 
   deploy-website:
     needs: deploy-infrastructure
@@ -62,8 +65,14 @@ jobs:
           sparse-checkout: site_files
           sparse-checkout-cone-mode: false
       - name: Deploy site files to Nginx
+        uses: Burnett01/rsync-deployments@7.0.2
         env:
           EC2_PUB_IP: ${{ needs.deploy-infrastructure.outputs.ec2_pub_ip }}
-        run: |
-          ls -larth site_files
-          echo $EC2_PUB_IP
+          FULL_DOMAIN: ${{ needs.deploy-infrastructure.outputs.full_domain }}
+        with:
+          switches: -avzr --rsync-path="sudo rsync"
+          path: site_files/
+          remote_path: "/var/www/${{ env.FULL_DOMAIN }}/html/"
+          remote_host: ${{ env.EC2_PUB_IP }}
+          remote_user: ubuntu
+          remote_key: ${{ secrets.SSH_PRIV_KEY }}
