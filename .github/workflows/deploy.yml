@@ -49,8 +49,8 @@ jobs:
       - name: Terraform save outputs
         id: terraform-outputs
         run: |
-          echo "EC2_PUB_IP=$(terraform output -raw ec2_public_ip)" >> "$GITHUB_OUTPUT"
-          echo "FULL_DOMAIN=$(terraform output -raw full_domain)" >> "$GITHUB_OUTPUT"
+          echo "EC2_PUB_IP=$(terraform output -raw ec2_public_ip)" >> "$GITHUB_ENV"
+          echo "FULL_DOMAIN=$(terraform output -raw full_domain)" >> "$GITHUB_ENV"
       - name: Deploy site files to Nginx
         uses: Burnett01/rsync-deployments@7.0.2
         with:
