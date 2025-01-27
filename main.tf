@@ -102,15 +102,15 @@ resource "cloudflare_record" "url" {
   proxied = true
 }
 
-resource "acme_registration" "reg_staging" {
-  provider      = acme.staging
+resource "acme_registration" "reg" {
+  provider      = acme.prod
   email_address = var.acme-email
 }
 
 resource "acme_certificate" "certificate" {
-  provider = acme.staging
+  provider = acme.prod
 
-  account_key_pem = acme_registration.reg_staging.account_key_pem
+  account_key_pem = acme_registration.reg.account_key_pem
   common_name     = local.full_domain
 
   dns_challenge {
@@ -128,7 +128,7 @@ resource "cloudflare_page_rule" "ssl-setting" {
   priority = 1
 
   actions {
-    ssl = "full"
+    ssl = "strict"
   }
 }
 
