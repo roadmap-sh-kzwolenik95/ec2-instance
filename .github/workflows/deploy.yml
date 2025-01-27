@@ -64,6 +64,8 @@ jobs:
         with:
           sparse-checkout: site_files
           sparse-checkout-cone-mode: false
+      - name: Check public ip
+        run: echo $(curl -s https://ipinfo.io/ip)
       - name: Deploy site files to Nginx
         uses: Burnett01/rsync-deployments@7.0.2
         env:
