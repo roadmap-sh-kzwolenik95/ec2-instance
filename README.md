@@ -116,5 +116,6 @@ This project fulfil requirements of the challenges and pushes for extra stretch 
     ```
     > I have configured two acme providers, one prod and one staging, modify the terraform code to switch
 3. For the pipeline for the project I used GitHub Actions, it's already avaliable with GitHub repository and have readable pipeline syntax, it's easy to use with AWS and terraform
+    > One job applies terraform and then uses rsync action to deploy the files
 
 Challenge link: https://roadmap.sh/projects/ec2-instance
