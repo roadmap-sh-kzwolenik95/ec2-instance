@@ -1,0 +1,52 @@
+name: Manual destroy Ceph Terraform CI
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: 'Type "DESTROY" to confirm destruction of resources'
+        required: true
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  destroy-terraform:
+    runs-on: ubuntu-latest
+    env:
+      TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      TF_VAR_my-machine-pub-key: ${{ vars.PUB_KEY }}
+      TF_VAR_apex-domain: ${{ vars.APEX_DOMAIN }}
+      TF_VAR_subdomain: ${{ vars.SUBDOMAIN }}
+      TF_VAR_acme-email: ${{ vars.ACME_EMAIL }}
+      TF_VAR_pvt_key: ${{ secrets.SSH_PRIV_KEY }}
+    steps:
+      - name: Check Confirmation Input
+        run: |
+          if [ "${{ github.event.inputs.confirmation }}" != "DESTROY" ]; then
+            echo "Invalid confirmation input. Aborting."
+            exit  1
+          fi
+        working-directory: ""
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: us-east-1
+          role-to-assume: ${{ secrets.IAMROLE_GITHUB }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate -no-color
+
+      - name: Terraform Destroy
+        run: terraform destroy -no-color -input=false -auto-approve

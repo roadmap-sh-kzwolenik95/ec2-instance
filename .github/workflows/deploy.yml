@@ -9,11 +9,8 @@ permissions:
   contents: read
   id-token: write
 
-env:
-  TF_VAR_pvt_key: ${{ secrets.SSH_PRIV_KEY }}
-
 jobs:
-  deploy-infrastructure:
+  deploy:
     runs-on: ubuntu-latest
     env:
       TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -21,6 +18,7 @@ jobs:
       TF_VAR_apex-domain: ${{ vars.APEX_DOMAIN }}
       TF_VAR_subdomain: ${{ vars.SUBDOMAIN }}
       TF_VAR_acme-email: ${{ vars.ACME_EMAIL }}
+      TF_VAR_pvt_key: ${{ secrets.SSH_PRIV_KEY }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -33,6 +31,8 @@ jobs:
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
 
       - name: Terraform Init
         run: terraform init
